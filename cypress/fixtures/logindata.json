@@ -1,0 +1,26 @@
+{
+  "validUser": {
+    "username": "Admin",
+    "password": "admin123"
+  },
+  "invalidUsername": {
+    "username": "admintesting",
+    "password": "admin123"
+  },
+  "invalidPassword": {
+    "username": "Admin",
+    "password": "123"
+  },
+  "invalidBoth": {
+    "username": "Adm",
+    "password": "admin45"
+  },
+  "specialChar": {
+    "username": "@@$$*&$",
+    "password": "@@$$*&$"
+  },
+  "invalidMessage": {
+    "username": "Adminnn",
+    "password": "admin45"
+  }
+}

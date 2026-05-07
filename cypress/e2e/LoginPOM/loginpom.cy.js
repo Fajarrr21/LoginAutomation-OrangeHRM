@@ -1,106 +1,108 @@
+import LoginPage from '../../support/pageObjects/loginPage'
+
+const loginPage = new LoginPage()
+
+// ============================================================
+
 describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
-  const BASE_URL = 'https://opensource-demo.orangehrmlive.com/web/index.php'
-  const VALID_USER = 'Admin'
-  const VALID_PASS = 'admin123'
+  beforeEach(() => {
+    loginPage.visitLogin()
+  })
 
   // TS-LOGIN001 : Akses Halaman Login
 
   it('TC-LOGIN001 : Akses URL dashboard tanpa login harus redirect ke halaman login', () => {
     cy.intercept('GET', '**/dashboard/index').as('dashboardAccess')
-    cy.visit(`${BASE_URL}/dashboard/index`)
+    loginPage.visitDashboard()
     cy.wait('@dashboardAccess')
-    cy.url().should('contain', '/auth/login')
+    loginPage.assertOnLoginPage()
   })
 
   it('TC-LOGIN002 : Menampilkan halaman login', () => {
     cy.intercept('GET', '**/auth/login').as('loginPage')
-    cy.visit(`${BASE_URL}/auth/login`)
+    loginPage.visitLogin()
     cy.wait('@loginPage').then((interception) => {
       expect(interception.response.statusCode).to.eq(200)
     })
-    cy.url().should('contain', '/auth/login')
-    cy.get('.orangehrm-login-branding').should('be.visible')
+    loginPage.assertOnLoginPage()
+    loginPage.assertBrandingVisible()
   })
 
   // TS-LOGIN002 : Verifikasi Elemen UI
 
   it('TC-LOGIN003 : Menampilkan field username dan password', () => {
     cy.intercept('GET', '**/auth/login').as('loginPageLoad')
-    cy.visit(`${BASE_URL}/auth/login`)
+    loginPage.visitLogin()
     cy.wait('@loginPageLoad').then((interception) => {
       expect(interception.response.statusCode).to.eq(200)
     })
-    cy.get('input[name="username"]').should('be.visible')
-    cy.get('input[name="password"]').should('be.visible')
+    loginPage.assertUsernameVisible()
+    loginPage.assertPasswordVisible()
   })
 
   it('TC-LOGIN004 : Menampilkan placeholder pada field username dan password', () => {
-    cy.intercept('GET', '**/auth/login').as('placeholderCheck')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.wait('@placeholderCheck').then((interception) => {
-      expect(interception.response.statusCode).to.eq(200)
-    })
-    cy.get('input[name="username"]').should('have.attr', 'placeholder', 'Username')
-    cy.get('input[name="password"]').should('have.attr', 'placeholder', 'Password')
+    loginPage.assertUsernamePlaceholder()
+    loginPage.assertPasswordPlaceholder()
   })
 
   it('TC-LOGIN005 : Tampilan UI login rapi sesuai design', () => {
     cy.intercept('GET', '**/auth/login').as('uiCheck')
-    cy.visit(`${BASE_URL}/auth/login`)
+    loginPage.visitLogin()
     cy.wait('@uiCheck').then((interception) => {
       expect(interception.response.statusCode).to.eq(200)
     })
-    cy.get('.orangehrm-login-branding').should('be.visible')
-    cy.get('input[name="username"]').should('be.visible')
-    cy.get('input[name="password"]').should('be.visible')
-    cy.get('button[type="submit"]').should('be.visible')
+    loginPage.assertBrandingVisible()
+    loginPage.assertUsernameVisible()
+    loginPage.assertPasswordVisible()
+    loginPage.assertSubmitVisible()
   })
 
   it('TC-LOGIN006 : Input data password disembunyikan (tampil titik-titik)', () => {
     cy.intercept('GET', '**/auth/login').as('passwordFieldCheck')
-    cy.visit(`${BASE_URL}/auth/login`)
+    loginPage.visitLogin()
     cy.wait('@passwordFieldCheck').then((interception) => {
       expect(interception.response.statusCode).to.eq(200)
     })
-    cy.get('input[name="password"]').type(VALID_PASS)
-    cy.get('input[name="password"]').should('have.attr', 'type', 'password')
+    cy.fixture('loginData').then((data) => {
+      loginPage.typePassword(data.validUser.password)
+      loginPage.assertPasswordMasked()
+    })
   })
 
   // TS-LOGIN003 : Login Berhasil
 
   it('TC-LOGIN007 : Login dengan input data valid berhasil redirect ke dashboard', () => {
     cy.intercept('POST', '**/auth/validate').as('loginRequest')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type(VALID_USER)
-    cy.get('input[name="password"]').type(VALID_PASS)
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.validUser.username, data.validUser.password)
+    })
     cy.wait('@loginRequest').then((interception) => {
       expect(interception.response.statusCode).to.eq(302)
     })
-    cy.url().should('contain', '/dashboard')
-    cy.get('h6.oxd-text').should('contain', 'Dashboard')
+    loginPage.assertOnDashboard()
+    loginPage.assertDashboardTitle()
   })
 
   it('TC-LOGIN008 : Login dengan tombol Enter data valid berhasil', () => {
     cy.intercept('POST', '**/auth/validate').as('loginEnter')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type(VALID_USER)
-    cy.get('input[name="password"]').type(VALID_PASS)
-    cy.get('form').submit()
+    cy.fixture('loginData').then((data) => {
+      loginPage.typeUsername(data.validUser.username)
+      loginPage.typePassword(data.validUser.password)
+      loginPage.submitForm()
+    })
     cy.wait('@loginEnter').then((interception) => {
       expect(interception.response.statusCode).to.eq(302)
     })
-    cy.url().should('contain', '/dashboard')
+    loginPage.assertOnDashboard()
   })
 
   it('TC-LOGIN009 : Response time login kurang dari 10 detik', () => {
     cy.intercept('POST', '**/auth/validate').as('loginTiming')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type(VALID_USER)
-    cy.get('input[name="password"]').type(VALID_PASS)
     const start = Date.now()
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.validUser.username, data.validUser.password)
+    })
     cy.wait('@loginTiming').then((interception) => {
       expect(interception.response.statusCode).to.eq(302)
     })
@@ -111,89 +113,82 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN010 : Login dengan kombinasi huruf dan angka yang valid berhasil', () => {
     cy.intercept('POST', '**/auth/validate').as('loginAlphanumeric')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type(VALID_USER)
-    cy.get('input[name="password"]').type(VALID_PASS)
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.validUser.username, data.validUser.password)
+    })
     cy.wait('@loginAlphanumeric').then((interception) => {
       expect(interception.response.statusCode).to.eq(302)
     })
-    cy.url().should('contain', '/dashboard')
+    loginPage.assertOnDashboard()
   })
 
   it('TC-LOGIN011 : Login dengan huruf besar dan kecil valid (case sensitive) berhasil', () => {
     cy.intercept('POST', '**/auth/validate').as('loginCaseSensitive')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type(VALID_USER)
-    cy.get('input[name="password"]').type(VALID_PASS)
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.validUser.username, data.validUser.password)
+    })
     cy.wait('@loginCaseSensitive').then((interception) => {
       expect(interception.response.statusCode).to.eq(302)
     })
-    cy.url().should('contain', '/dashboard')
+    loginPage.assertOnDashboard()
   })
 
   // TS-LOGIN004 : Login Gagal - Data Invalid
 
   it('TC-LOGIN012 : Input username salah menampilkan pesan error', () => {
     cy.intercept('POST', '**/auth/validate').as('wrongUsername')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type('admintesting')
-    cy.get('input[name="password"]').type(VALID_PASS)
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.invalidUsername.username, data.invalidUsername.password)
+    })
     cy.wait('@wrongUsername').then((interception) => {
       expect(interception.response.statusCode).to.not.eq(200)
     })
-    cy.get('.oxd-alert-content-text').should('be.visible').should('contain', 'Invalid credentials')
+    loginPage.assertInvalidCredentials()
   })
 
   it('TC-LOGIN013 : Input password salah menampilkan pesan error', () => {
     cy.intercept('POST', '**/auth/validate').as('wrongPassword')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type(VALID_USER)
-    cy.get('input[name="password"]').type('123')
-    cy.get('button[type="submit"]').click()
-    cy.wait('@wrongPassword').then((interception) => {
-      const body = interception.request.body
-      expect(body).to.include('123')
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.invalidPassword.username, data.invalidPassword.password)
+      cy.wait('@wrongPassword').then((interception) => {
+        const body = interception.request.body
+        expect(body).to.include(data.invalidPassword.password)
+      })
     })
-    cy.get('.oxd-alert-content-text').should('be.visible').should('contain', 'Invalid credentials')
+    loginPage.assertInvalidCredentials()
   })
 
   it('TC-LOGIN014 : Input username dan password salah menolak login', () => {
     cy.intercept('POST', '**/auth/validate').as('wrongBoth')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type('Adm')
-    cy.get('input[name="password"]').type('admin45')
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.invalidBoth.username, data.invalidBoth.password)
+    })
     cy.wait('@wrongBoth').then((interception) => {
       expect(interception.response.statusCode).to.not.eq(200)
     })
-    cy.get('.oxd-alert-content-text').should('be.visible').should('contain', 'Invalid credentials')
+    loginPage.assertInvalidCredentials()
   })
 
   it('TC-LOGIN015 : Input karakter khusus pada username dan password menampilkan error', () => {
     cy.intercept('POST', '**/auth/validate').as('specialChar')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type('@@$$*&$')
-    cy.get('input[name="password"]').type('@@$$*&$')
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.specialChar.username, data.specialChar.password)
+    })
     cy.wait('@specialChar').then((interception) => {
       expect(interception.response.statusCode).to.not.eq(200)
     })
-    cy.get('.oxd-alert-content-text').should('be.visible')
+    loginPage.assertAlertVisible()
   })
 
   it('TC-LOGIN016 : Pesan validasi error tampil jelas saat login gagal', () => {
     cy.intercept('POST', '**/auth/validate').as('errorMessage')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type('Adminnn')
-    cy.get('input[name="password"]').type('admin45')
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.login(data.invalidMessage.username, data.invalidMessage.password)
+    })
     cy.wait('@errorMessage').then((interception) => {
       expect(interception.response.statusCode).to.not.eq(200)
     })
-    cy.get('.oxd-alert-content-text').should('be.visible').should('contain', 'Invalid credentials')
+    loginPage.assertInvalidCredentials()
   })
 
   // TS-LOGIN005 : Validasi Field Kosong
@@ -201,36 +196,36 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
   it('TC-LOGIN017 : Validasi error saat username dikosongkan', () => {
     let requestFired = false
     cy.intercept('POST', '**/auth/validate', () => { requestFired = true }).as('emptyUsername')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').clear()
-    cy.get('input[name="password"]').type(VALID_PASS)
-    cy.get('button[type="submit"]').click()
-    cy.get('.oxd-input-field-error-message').should('be.visible').should('contain', 'Required')
-    cy.wait(1000).then(() => {
-      expect(requestFired).to.be.false
+    cy.fixture('loginData').then((data) => {
+      loginPage.clearUsername()
+      loginPage.typePassword(data.validUser.password)
+      loginPage.clickSubmit()
+      loginPage.assertSingleRequiredError()
+      cy.wait(1000).then(() => {
+        expect(requestFired).to.be.false
+      })
     })
   })
 
   it('TC-LOGIN018 : Validasi error saat password dikosongkan', () => {
     let requestFired = false
     cy.intercept('POST', '**/auth/validate', () => { requestFired = true }).as('emptyPassword')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type(VALID_USER)
-    cy.get('input[name="password"]').clear()
-    cy.get('button[type="submit"]').click()
-    cy.get('.oxd-input-field-error-message').should('be.visible').should('contain', 'Required')
-    cy.wait(1000).then(() => {
-      expect(requestFired).to.be.false
+    cy.fixture('loginData').then((data) => {
+      loginPage.typeUsername(data.validUser.username)
+      loginPage.clearPassword()
+      loginPage.clickSubmit()
+      loginPage.assertSingleRequiredError()
+      cy.wait(1000).then(() => {
+        expect(requestFired).to.be.false
+      })
     })
   })
 
   it('TC-LOGIN019 : Validasi error saat semua field kosong dan klik login', () => {
     let requestFired = false
     cy.intercept('POST', '**/auth/validate', () => { requestFired = true }).as('emptyBoth')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('button[type="submit"]').click()
-    cy.get('.oxd-input-field-error-message').should('have.length', 2)
-    cy.get('.oxd-input-field-error-message').should('contain', 'Required')
+    loginPage.clickSubmit()
+    loginPage.assertRequiredErrors()
     cy.wait(1000).then(() => {
       expect(requestFired).to.be.false
     })
@@ -240,11 +235,13 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN020 : Button login bisa diklik dan berfungsi', () => {
     cy.intercept('GET', '**/auth/login').as('buttonCheck')
-    cy.visit(`${BASE_URL}/auth/login`)
+    loginPage.visitLogin()
     cy.wait('@buttonCheck').then((interception) => {
       expect(interception.response.statusCode).to.eq(200)
     })
-    cy.get('button[type="submit"]').should('be.visible').should('be.enabled').click()
+    loginPage.assertSubmitVisible()
+    loginPage.assertSubmitEnabled()
+    loginPage.clickSubmit()
   })
 
   it('TC-LOGIN021 : Double click button login hanya memproses 1 request', () => {
@@ -253,10 +250,11 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
       requestCount++
       req.continue()
     }).as('doubleClick')
-    cy.visit(`${BASE_URL}/auth/login`)
-    cy.get('input[name="username"]').type(VALID_USER)
-    cy.get('input[name="password"]').type(VALID_PASS)
-    cy.get('button[type="submit"]').click()
+    cy.fixture('loginData').then((data) => {
+      loginPage.typeUsername(data.validUser.username)
+      loginPage.typePassword(data.validUser.password)
+      loginPage.clickSubmit()
+    })
     cy.wait('@doubleClick').then((interception) => {
       expect(interception.response.statusCode).to.eq(302)
     })
@@ -276,13 +274,13 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     viewports.forEach(({ width, height, label }) => {
       cy.intercept('GET', '**/auth/login').as(`loginPage_${label}`)
       cy.viewport(width, height)
-      cy.visit(`${BASE_URL}/auth/login`)
+      loginPage.visitLogin()
       cy.wait(`@loginPage_${label}`).then((interception) => {
         expect(interception.response.statusCode).to.eq(200)
       })
-      cy.get('input[name="username"]').should('be.visible')
-      cy.get('input[name="password"]').should('be.visible')
-      cy.get('button[type="submit"]').should('be.visible')
+      loginPage.assertUsernameVisible()
+      loginPage.assertPasswordVisible()
+      loginPage.assertSubmitVisible()
     })
   })
 

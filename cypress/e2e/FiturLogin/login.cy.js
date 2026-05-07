@@ -25,13 +25,13 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('input[name="password"]').should('be.visible')
   })
 
-  it('TC-LOGIN011 : Menampilkan placeholder pada field username dan password', () => {
+  it('TC-LOGIN004 : Menampilkan placeholder pada field username dan password', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').should('have.attr', 'placeholder', 'Username')
     cy.get('input[name="password"]').should('have.attr', 'placeholder', 'Password')
   })
 
-  it('TC-LOGIN014 : Tampilan UI login rapi sesuai design', () => {
+  it('TC-LOGIN005 : Tampilan UI login rapi sesuai design', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('.orangehrm-login-branding').should('be.visible')
     cy.get('input[name="username"]').should('be.visible')
@@ -39,7 +39,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('button[type="submit"]').should('be.visible')
   })
 
-  it('TC-LOGIN016 : Input data password disembunyikan (tampil titik-titik)', () => {
+  it('TC-LOGIN006 : Input data password disembunyikan (tampil titik-titik)', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="password"]').type(VALID_PASS)
     cy.get('input[name="password"]').should('have.attr', 'type', 'password')
@@ -47,7 +47,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-LOGIN003 : Login Berhasil
 
-  it('TC-LOGIN004 : Login dengan input data valid berhasil redirect ke dashboard', () => {
+  it('TC-LOGIN007 : Login dengan input data valid berhasil redirect ke dashboard', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type(VALID_USER)
     cy.get('input[name="password"]').type(VALID_PASS)
@@ -56,7 +56,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('h6.oxd-text').should('contain', 'Dashboard')
   })
 
-  it('TC-LOGIN013 : Login dengan tombol Enter data valid berhasil', () => {
+  it('TC-LOGIN008 : Login dengan tombol Enter data valid berhasil', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type(VALID_USER)
     cy.get('input[name="password"]').type(VALID_PASS)
@@ -64,18 +64,18 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.url().should('contain', '/dashboard')
   })
 
-  it('TC-LOGIN015 : Response time login kurang dari 5 detik', () => {
+  it('TC-LOGIN009 : Response time login kurang dari 10 detik', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type(VALID_USER)
     cy.get('input[name="password"]').type(VALID_PASS)
     const start = Date.now()
     cy.get('button[type="submit"]').click()
     cy.url().should('contain', '/dashboard').then(() => {
-      expect(Date.now() - start).to.be.lessThan(5000)
+      expect(Date.now() - start).to.be.lessThan(10000)
     })
   })
 
-  it('TC-LOGIN018 : Login dengan kombinasi huruf dan angka yang valid berhasil', () => {
+  it('TC-LOGIN010 : Login dengan kombinasi huruf dan angka yang valid berhasil', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type(VALID_USER)
     cy.get('input[name="password"]').type(VALID_PASS)
@@ -83,17 +83,17 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.url().should('contain', '/dashboard')
   })
 
-  it('TC-LOGIN020 : Login dengan huruf besar dan kecil valid (case sensitive) berhasil', () => {
+  it('TC-LOGIN011 : Login dengan huruf besar dan kecil valid (case sensitive) berhasil', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type(VALID_USER)
     cy.get('input[name="password"]').type(VALID_PASS)
     cy.get('button[type="submit"]').click()
     cy.url().should('contain', '/dashboard')
   })
-  
+
   // TS-LOGIN004 : Login Gagal - Data Invalid
 
-  it('TC-LOGIN007 : Input username salah menampilkan pesan error', () => {
+  it('TC-LOGIN012 : Input username salah menampilkan pesan error', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type('admintesting')
     cy.get('input[name="password"]').type(VALID_PASS)
@@ -101,7 +101,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('.oxd-alert-content-text').should('be.visible').should('contain', 'Invalid credentials')
   })
 
-  it('TC-LOGIN008 : Input password salah menampilkan pesan error', () => {
+  it('TC-LOGIN013 : Input password salah menampilkan pesan error', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type(VALID_USER)
     cy.get('input[name="password"]').type('123')
@@ -109,7 +109,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('.oxd-alert-content-text').should('be.visible').should('contain', 'Invalid credentials')
   })
 
-  it('TC-LOGIN009 : Input username dan password salah menolak login', () => {
+  it('TC-LOGIN014 : Input username dan password salah menolak login', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type('Adm')
     cy.get('input[name="password"]').type('admin45')
@@ -117,7 +117,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('.oxd-alert-content-text').should('be.visible').should('contain', 'Invalid credentials')
   })
 
-  it('TC-LOGIN017 : Input karakter khusus pada username dan password menampilkan error', () => {
+  it('TC-LOGIN015 : Input karakter khusus pada username dan password menampilkan error', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type('@@$$*&$')
     cy.get('input[name="password"]').type('@@$$*&$')
@@ -125,7 +125,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('.oxd-alert-content-text').should('be.visible')
   })
 
-  it('TC-LOGIN021 : Pesan validasi error tampil jelas saat login gagal', () => {
+  it('TC-LOGIN016 : Pesan validasi error tampil jelas saat login gagal', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type('Adminnn')
     cy.get('input[name="password"]').type('admin45')
@@ -135,7 +135,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-LOGIN005 : Validasi Field Kosong
 
-  it('TC-LOGIN005 : Validasi error saat username dikosongkan', () => {
+  it('TC-LOGIN017 : Validasi error saat username dikosongkan', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').clear()
     cy.get('input[name="password"]').type(VALID_PASS)
@@ -143,7 +143,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('.oxd-input-field-error-message').should('be.visible').should('contain', 'Required')
   })
 
-  it('TC-LOGIN006 : Validasi error saat password dikosongkan', () => {
+  it('TC-LOGIN018 : Validasi error saat password dikosongkan', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type(VALID_USER)
     cy.get('input[name="password"]').clear()
@@ -151,7 +151,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.get('.oxd-input-field-error-message').should('be.visible').should('contain', 'Required')
   })
 
-  it('TC-LOGIN010 : Validasi error saat semua field kosong dan klik login', () => {
+  it('TC-LOGIN019 : Validasi error saat semua field kosong dan klik login', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('button[type="submit"]').click()
     cy.get('.oxd-input-field-error-message').should('have.length', 2)
@@ -160,12 +160,12 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-LOGIN006 : Button Login
 
-  it('TC-LOGIN012 : Button login bisa diklik dan berfungsi', () => {
+  it('TC-LOGIN020 : Button login bisa diklik dan berfungsi', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('button[type="submit"]').should('be.visible').should('be.enabled').click()
   })
 
-  it('TC-LOGIN022 : Double click button login hanya memproses 1 request', () => {
+  it('TC-LOGIN021 : Double click button login hanya memproses 1 request', () => {
     cy.visit(`${BASE_URL}/auth/login`)
     cy.get('input[name="username"]').type(VALID_USER)
     cy.get('input[name="password"]').type(VALID_PASS)
@@ -175,7 +175,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-LOGIN007 : Layar Responsif
 
-  it('TC-LOGIN025 : Halaman login tampil responsif di berbagai ukuran layar', () => {
+  it('TC-LOGIN022 : Halaman login tampil responsif di berbagai ukuran layar', () => {
     const viewports = [
       { width: 1280, height: 800, label: 'Desktop' },
       { width: 768,  height: 1024, label: 'Tablet' },

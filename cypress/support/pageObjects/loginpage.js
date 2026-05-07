@@ -2,7 +2,7 @@ const BASE_URL = 'https://opensource-demo.orangehrmlive.com/web/index.php'
 
 class LoginPage {
 
-  // ── Selectors ──────────────────────────────────────────────
+  //Selectors 
   get usernameInput()  { return cy.get('input[name="username"]') }
   get passwordInput()  { return cy.get('input[name="password"]') }
   get submitButton()   { return cy.get('button[type="submit"]') }
@@ -11,7 +11,7 @@ class LoginPage {
   get errorMessages()  { return cy.get('.oxd-input-field-error-message') }
   get dashboardTitle() { return cy.get('h6.oxd-text') }
 
-  // ── Actions ────────────────────────────────────────────────
+  //Actions
   visitLogin() {
     cy.visit(`${BASE_URL}/auth/login`)
   }
@@ -50,7 +50,7 @@ class LoginPage {
     this.clickSubmit()
   }
 
-  // ── Assertions ─────────────────────────────────────────────
+  //Assertions
   assertOnLoginPage() {
     cy.url().should('contain', '/auth/login')
   }

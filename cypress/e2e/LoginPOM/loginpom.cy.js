@@ -2,8 +2,6 @@ import LoginPage from '../../support/pageObjects/loginPage'
 
 const loginPage = new LoginPage()
 
-// ============================================================
-
 describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   beforeEach(() => {

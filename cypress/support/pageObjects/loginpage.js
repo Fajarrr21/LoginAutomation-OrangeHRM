@@ -1,3 +1,6 @@
+Cypress.on('uncaught:exception', (err, runnable) => {
+  return false
+})
 const BASE_URL = 'https://opensource-demo.orangehrmlive.com/web/index.php'
 
 class LoginPage {

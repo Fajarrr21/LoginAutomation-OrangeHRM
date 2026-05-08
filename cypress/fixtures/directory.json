@@ -1,0 +1,20 @@
+{
+  "validEmployee": {
+    "name": "Peter Mac Anderson"
+  },
+  "partialName": {
+    "name": "Peter"
+  },
+  "invalidEmployee": {
+    "name": "ZZZNotExistEmployee"
+  },
+  "specialChar": {
+    "name": "@#$%^&*"
+  },
+  "validJobTitle": "Chief Financial Officer",
+  "validLocation": "New York Sales Office",
+  "credentials": {
+    "username": "Admin",
+    "password": "admin123"
+  }
+}

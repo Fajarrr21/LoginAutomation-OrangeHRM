@@ -2,7 +2,7 @@ const BASE_URL = 'https://opensource-demo.orangehrmlive.com/web/index.php'
 
 class ForgotPasswordPage {
 
-  // ── Selectors ──────────────────────────────────────────────
+  //Selectors 
   get forgotPasswordLink() { return cy.get('.orangehrm-login-forgot') }
   get usernameInput()      { return cy.get('input[name="username"]') }
   get resetButton()        { return cy.get('button[type="submit"]') }
@@ -11,7 +11,7 @@ class ForgotPasswordPage {
   get cardContainer()      { return cy.get('.orangehrm-card-container') }
   get copyrightText()      { return cy.get('.orangehrm-copyright') }
 
-  // ── Actions ────────────────────────────────────────────────
+  //Actions 
   visitLogin() {
     cy.visit(`${BASE_URL}/auth/login`)
   }
@@ -40,7 +40,7 @@ class ForgotPasswordPage {
     this.cancelButton.click()
   }
 
-  // ── Assertions ─────────────────────────────────────────────
+  //Assertions
   assertOnForgotPasswordPage() {
     cy.url().should('contain', '/auth/requestPasswordResetCode')
   }

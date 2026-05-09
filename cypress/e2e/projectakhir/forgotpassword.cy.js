@@ -21,7 +21,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     forgotPage.assertOnForgotPasswordPage()
   })
 
-  it('TC-FP002 : Halaman forgot password berhasil dimuat dengan status 200', () => {
+  it('TC-FP002 : Halaman forgot password berhasil dibuka', () => {
     cy.intercept('GET', '**/auth/requestPasswordResetCode').as('forgotPageLoad')
     forgotPage.visitForgotPassword()
     cy.wait('@forgotPageLoad').then((interception) => {
@@ -83,7 +83,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-FP003 : Submit reset password
 
-  it('TC-FP013 : Submit dengan username valid berhasil dikirim ke halaman konfirmasi', () => {
+  it('TC-FP013 : Submit dengan username valid berhasil masuk ke halaman konfirmasi', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('resetRequest')
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.validUser.username)
@@ -95,7 +95,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     cy.url({ timeout: 60000 }).should('contain', '/auth/sendPasswordReset')
   })
 
-  it('TC-FP014 : Submit dengan username tidak terdaftar tetap redirect ke halaman konfirmasi', () => {
+  it('TC-FP014 : Submit dengan username tidak terdaftar tetap masuk ke halaman konfirmasi', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('invalidReset')
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.invalidUser.username)
@@ -107,7 +107,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     cy.url({ timeout: 60000 }).should('contain', '/auth/sendPasswordReset')
   })
 
-  it('TC-FP015 : Submit dengan karakter khusus pada username tetap diproses', () => {
+  it('TC-FP015 : Submit dengan karakter khusus pada username tetap bisa diproses', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('specialCharReset')
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.specialChar.username)
@@ -119,7 +119,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     cy.url({ timeout: 60000 }).should('contain', '/auth/sendPasswordReset')
   })
 
-  it('TC-FP016 : Halaman sukses menampilkan judul reset password link sent successfully', () => {
+  it('TC-FP016 : Halaman konfirmasi menampilkan judul reset password link sent successfully', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('successReset')
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.validUser.username)
@@ -131,7 +131,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
       .should('contain', 'Reset Password link sent successfully')
   })
 
-  it('TC-FP017 : Halaman sukses menampilkan pesan link dikirim via email', () => {
+  it('TC-FP017 : Halaman konfirmasi menampilkan pesan link dikirim via email', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('emailMsg')
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.validUser.username)
@@ -142,7 +142,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     cy.contains('A reset password link has been sent to you via email.', { timeout: 10000 }).should('be.visible')
   })
 
-  it('TC-FP018 : Halaman sukses menampilkan pesan instruksi memilih password baru', () => {
+  it('TC-FP018 : Halaman konfirmasi menampilkan instruksi memilih password baru', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('instruksiMsg')
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.validUser.username)
@@ -153,7 +153,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     cy.contains('You can follow that link and select a new password.', { timeout: 10000 }).should('be.visible')
   })
 
-  it('TC-FP019 : Halaman sukses menampilkan catatan hubungi administrator', () => {
+  it('TC-FP019 : Halaman konfirmasi menampilkan catatan untuk hubungi administrator', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('adminNote')
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.validUser.username)
@@ -164,7 +164,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     cy.contains('If the email does not arrive, please contact your OrangeHRM Administrator.', { timeout: 10000 }).should('be.visible')
   })
 
-  it('TC-FP020 : Halaman sukses menampilkan card container', () => {
+  it('TC-FP020 : Halaman konfirmasi menampilkan card container', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('successCard')
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.validUser.username)
@@ -177,7 +177,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-FP004 : Validasi field kosong
 
-  it('TC-FP021 : Submit username kosong — request tidak terkirim ke server', () => {
+  it('TC-FP021 : Submit dengan username kosong tidak bisa dikirim', () => {
     let requestFired = false
     cy.intercept('POST', '**/auth/requestResetPassword', () => { requestFired = true }).as('emptyReset')
     cy.get('input[name="username"]').clear()
@@ -188,7 +188,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     forgotPage.assertOnForgotPasswordPage()
   })
 
-  it('TC-FP022 : Submit username hanya spasi — request tidak terkirim ke server', () => {
+  it('TC-FP022 : Submit dengan username hanya spasi tidak bisa dikirim', () => {
     let requestFired = false
     cy.intercept('POST', '**/auth/requestResetPassword', () => { requestFired = true }).as('spaceReset')
     cy.get('input[name="username"]').type('   ')
@@ -210,7 +210,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     forgotPage.assertOnLoginPage()
   })
 
-  it('TC-FP024 : Klik cancel setelah mengisi username tidak menyimpan data', () => {
+  it('TC-FP024 : Klik cancel setelah mengisi username kembali ke halaman login', () => {
     cy.fixture('forgotpassword').then((data) => {
       forgotPage.typeUsername(data.validUser.username)
       forgotPage.clickCancel()
@@ -227,7 +227,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     forgotPage.assertOnLoginPage()
   })
 
-  it('TC-FP026 : Setelah cancel, halaman login menampilkan form login dengan benar', () => {
+  it('TC-FP026 : Setelah cancel, halaman login tampil dengan benar', () => {
     forgotPage.clickCancel()
     cy.get('input[name="username"]', { timeout: 10000 }).should('be.visible')
     cy.get('input[name="password"]').should('be.visible')
@@ -236,7 +236,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-FP006 : Responsif
 
-  it('TC-FP027 : Halaman forgot password responsif di berbagai ukuran layar', () => {
+  it('TC-FP027 : Halaman forgot password tampil dengan baik di berbagai ukuran layar', () => {
     const viewports = [
       { width: 1280, height: 800,  label: 'Desktop' },
       { width: 768,  height: 1024, label: 'Tablet' },
@@ -266,7 +266,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-FP007 : Response time
 
-  it('TC-FP029 : Response time submit reset password kurang dari 10 detik', () => {
+  it('TC-FP029 : Proses reset password selesai kurang dari 10 detik', () => {
     cy.intercept('POST', '**/auth/requestResetPassword').as('resetTiming')
     const start = Date.now()
     cy.fixture('forgotpassword').then((data) => {
@@ -281,7 +281,7 @@ describe('Forgot Password OrangeHRM - Fajar Ardiansyah', () => {
     })
   })
 
-  it('TC-FP030 : Halaman forgot password load kurang dari 10 detik', () => {
+  it('TC-FP030 : Halaman forgot password selesai dimuat kurang dari 10 detik', () => {
     cy.intercept('GET', '**/auth/requestPasswordResetCode').as('pageLoadTime')
     const start = Date.now()
     forgotPage.visitForgotPassword()

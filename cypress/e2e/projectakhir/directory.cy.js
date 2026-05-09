@@ -20,7 +20,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
     directoryPage.assertOnLoginPage()
   })
 
-  it('TC-DIR002 : Halaman directory berhasil dimuat dengan status 200', () => {
+  it('TC-DIR002 : Halaman directory berhasil dibuka', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('directoryLoad')
     directoryPage.visitDirectory()
     cy.wait('@directoryLoad').then((interception) => {
@@ -29,7 +29,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
     directoryPage.assertOnDirectoryPage()
   })
 
-  it('TC-DIR003 : Menampilkan halaman directory setelah login', () => {
+  it('TC-DIR003 : Halaman directory tampil setelah login', () => {
     directoryPage.assertOnDirectoryPage()
     directoryPage.assertFilterTitleVisible()
   })
@@ -70,14 +70,14 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
     directoryPage.assertFilterLabelsVisible()
   })
 
-  it('TC-DIR012 : Records found counter tampil saat halaman dibuka', () => {
+  it('TC-DIR012 : Jumlah data karyawan tampil saat halaman dibuka', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('initialLoad')
     directoryPage.visitDirectory()
     cy.wait('@initialLoad')
     directoryPage.assertRecordsFoundVisible()
   })
 
-  it('TC-DIR013 : List card karyawan tampil saat halaman dibuka', () => {
+  it('TC-DIR013 : Card karyawan tampil saat halaman dibuka', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('cardsLoad')
     directoryPage.visitDirectory()
     cy.wait('@cardsLoad').then((interception) => {
@@ -95,7 +95,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
     })
   })
 
-  it('TC-DIR015 : Search dengan nama valid mengirim request ke API', () => {
+  it('TC-DIR015 : Search dengan nama valid menampilkan data karyawan', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('searchValid')
     cy.fixture('directory').then((data) => {
       directoryPage.typeEmployeeName(data.validEmployee.name)
@@ -107,7 +107,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
     })
   })
 
-  it('TC-DIR016 : Search dengan nama tidak terdaftar menampilkan pesan invalid', () => {
+  it('TC-DIR016 : Search dengan nama yang tidak terdaftar menampilkan pesan invalid', () => {
     cy.fixture('directory').then((data) => {
       directoryPage.typeEmployeeName(data.invalidEmployee.name)
       directoryPage.clickSearch()
@@ -126,7 +126,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-DIR004 : Validasi field kosong
 
-  it('TC-DIR018 : Klik search tanpa mengisi filter tetap menampilkan semua records', () => {
+  it('TC-DIR018 : Klik search tanpa mengisi filter tetap menampilkan semua data karyawan', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('searchEmpty')
     directoryPage.clickSearch()
     cy.wait('@searchEmpty').then((interception) => {
@@ -136,7 +136,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
     directoryPage.assertDirectoryCardsVisible()
   })
 
-  it('TC-DIR019 : Search dengan input hanya spasi tidak mengirim request ke server', () => {
+  it('TC-DIR019 : Search dengan input hanya spasi tetap berada di halaman directory', () => {
     let requestFired = false
     cy.intercept('GET', '**/api/v2/directory/employees**', () => { requestFired = true }).as('searchSpace')
     directoryPage.typeEmployeeName('   ')
@@ -148,7 +148,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-DIR005 : Reset filter
 
-  it('TC-DIR020 : Klik reset mengembalikan filter form ke kondisi awal', () => {
+  it('TC-DIR020 : Klik reset mengembalikan data karyawan ke tampilan awal', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('resetForm')
     cy.fixture('directory').then((data) => {
       directoryPage.typeEmployeeName(data.partialName.name)
@@ -179,7 +179,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
     directoryPage.assertLocationDropdownVisible()
   })
 
-  it('TC-DIR023 : Klik reset mengirim request ulang ke API', () => {
+  it('TC-DIR023 : Klik reset memuat ulang data karyawan', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('resetReload')
     directoryPage.clickReset()
     cy.wait('@resetReload').then((interception) => {
@@ -197,7 +197,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-DIR007 : Responsif
 
-  it('TC-DIR025 : Halaman directory responsif di berbagai ukuran layar', () => {
+  it('TC-DIR025 : Halaman directory tampil dengan baik di berbagai ukuran layar', () => {
     const viewports = [
       { width: 1280, height: 800,  label: 'Desktop' },
       { width: 768,  height: 1024, label: 'Tablet' },
@@ -229,7 +229,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
 
   // TS-DIR008 : Response time
 
-  it('TC-DIR027 : Response time load halaman directory kurang dari 10 detik', () => {
+  it('TC-DIR027 : Halaman directory selesai dimuat kurang dari 10 detik', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('loadTime')
     const start = Date.now()
     directoryPage.visitDirectory()
@@ -239,7 +239,7 @@ describe('Directory OrangeHRM - Fajar Ardiansyah', () => {
     })
   })
 
-  it('TC-DIR028 : Response time search kurang dari 10 detik', () => {
+  it('TC-DIR028 : Hasil search tampil kurang dari 10 detik', () => {
     cy.intercept('GET', '**/api/v2/directory/employees**').as('searchTime')
     const start = Date.now()
     cy.fixture('directory').then((data) => {

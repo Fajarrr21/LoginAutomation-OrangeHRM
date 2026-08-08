@@ -63,7 +63,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
     cy.wait('@passwordFieldCheck').then((interception) => {
       expect(interception.response.statusCode).to.eq(200)
     })
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.typePassword(data.validUser.password)
       loginPage.assertPasswordMasked()
     })
@@ -73,7 +73,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN007 : Login dengan input data valid berhasil redirect ke dashboard', () => {
     cy.intercept('POST', '**/auth/validate').as('loginRequest')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.validUser.username, data.validUser.password)
     })
     cy.wait('@loginRequest').then((interception) => {
@@ -85,7 +85,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN008 : Login dengan tombol enter data valid berhasil', () => {
     cy.intercept('POST', '**/auth/validate').as('loginEnter')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.typeUsername(data.validUser.username)
       loginPage.typePassword(data.validUser.password)
       loginPage.submitForm()
@@ -99,7 +99,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
   it('TC-LOGIN009 : Response time login kurang dari 10 detik', () => {
     cy.intercept('POST', '**/auth/validate').as('loginTiming')
     const start = Date.now()
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.validUser.username, data.validUser.password)
     })
     cy.wait('@loginTiming').then((interception) => {
@@ -112,7 +112,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN010 : Login dengan kombinasi huruf dan angka yang valid berhasil', () => {
     cy.intercept('POST', '**/auth/validate').as('loginAlphanumeric')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.validUser.username, data.validUser.password)
     })
     cy.wait('@loginAlphanumeric').then((interception) => {
@@ -123,7 +123,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN011 : Login dengan huruf besar dan kecil valid (case sensitive) berhasil', () => {
     cy.intercept('POST', '**/auth/validate').as('loginCaseSensitive')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.validUser.username, data.validUser.password)
     })
     cy.wait('@loginCaseSensitive').then((interception) => {
@@ -136,7 +136,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN012 : Input username salah menampilkan pesan error', () => {
     cy.intercept('POST', '**/auth/validate').as('wrongUsername')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.invalidUsername.username, data.invalidUsername.password)
     })
     cy.wait('@wrongUsername').then((interception) => {
@@ -147,7 +147,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN013 : Input password salah menampilkan pesan error', () => {
     cy.intercept('POST', '**/auth/validate').as('wrongPassword')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.invalidPassword.username, data.invalidPassword.password)
       cy.wait('@wrongPassword').then((interception) => {
         const body = interception.request.body
@@ -159,7 +159,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN014 : Input username dan password salah menolak login', () => {
     cy.intercept('POST', '**/auth/validate').as('wrongBoth')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.invalidBoth.username, data.invalidBoth.password)
     })
     cy.wait('@wrongBoth').then((interception) => {
@@ -170,7 +170,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN015 : Input karakter khusus pada username dan password menampilkan error', () => {
     cy.intercept('POST', '**/auth/validate').as('specialChar')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.specialChar.username, data.specialChar.password)
     })
     cy.wait('@specialChar').then((interception) => {
@@ -181,7 +181,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
 
   it('TC-LOGIN016 : Pesan validasi error tampil jelas saat login gagal', () => {
     cy.intercept('POST', '**/auth/validate').as('errorMessage')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.login(data.invalidMessage.username, data.invalidMessage.password)
     })
     cy.wait('@errorMessage').then((interception) => {
@@ -195,7 +195,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
   it('TC-LOGIN017 : Validasi error saat username dikosongkan', () => {
     let requestFired = false
     cy.intercept('POST', '**/auth/validate', () => { requestFired = true }).as('emptyUsername')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.clearUsername()
       loginPage.typePassword(data.validUser.password)
       loginPage.clickSubmit()
@@ -209,7 +209,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
   it('TC-LOGIN018 : Validasi error saat password dikosongkan', () => {
     let requestFired = false
     cy.intercept('POST', '**/auth/validate', () => { requestFired = true }).as('emptyPassword')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.typeUsername(data.validUser.username)
       loginPage.clearPassword()
       loginPage.clickSubmit()
@@ -249,7 +249,7 @@ describe('Login OrangeHRM - Fajar Ardiansyah', () => {
       requestCount++
       req.continue()
     }).as('doubleClick')
-    cy.fixture('loginData').then((data) => {
+    cy.fixture('logindata').then((data) => {
       loginPage.typeUsername(data.validUser.username)
       loginPage.typePassword(data.validUser.password)
       loginPage.clickSubmit()

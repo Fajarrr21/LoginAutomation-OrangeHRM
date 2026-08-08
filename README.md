@@ -1,5 +1,7 @@
 # OrangeHRM — Cypress Automation
 
+![Cypress Tests](https://github.com/Fajarrr21/Automation-OrangeHRM/actions/workflows/cypress.yml/badge.svg)
+
 Automation testing untuk [OrangeHRM](https://opensource-demo.orangehrmlive.com) menggunakan **Cypress** dengan **Page Object Model (POM)**. Project ini mencakup **UI testing** (Login, Forgot Password, Directory) dan **API testing** (Platzi Fake Store API), lengkap dengan CI via GitHub Actions.
 
 ## Tech Stack
